@@ -1,12 +1,12 @@
-let lastNumber = null
-let operators = {
-    add: function(a,b) { return a + b },
-    sub: function(a,b) { return a - b },
-    div: function(a,b) { return a / b },
-    mult: function(a,b) { return a * b }
-}
-let sign;
+let lastInput;
 let decimal = false
+let expression = ''
+let operators = {
+    add: '+',
+    sub: '-',
+    div: '/',
+    mult: '*'
+}
 // Click handler for overall calculator
 $($('.btn').on('click', function () {
     // Handles clearing values
@@ -15,51 +15,38 @@ $($('.btn').on('click', function () {
         lastNumber = null;
         sign = null;
         decimal = false;
+        expression = '';
     } 
     // Adds numbers to screen
     else if ($(this).attr('data') === 'num') {
-        
+        lastInput = 'num';
         if ($(this).attr('id') === '.') {
             if (decimal === false) {
                 $('#result').append($(this).attr('id'));
+                expression += '.'
                 decimal = true;
             } else {
                 $('#result').append($(this).attr(''));
             }
         } else {
             $('#result').append($(this).attr('id'));
+            expression += $(this).attr('id')
         }
     } 
     // Handles operators
-    else if ($(this).attr('data') === 'op') {
-       lastNumber = parseFloat($('#result').text());
-        if ($(this).attr('id') === 'mult') {
-            sign = 'mult';
-        } else if ($(this).attr('id') === 'div') {
-            sign = 'div';
-        } else if ($(this).attr('id') === 'add') {
-            sign = 'add';
-        } else if ($(this).attr('id') === 'sub') {
-            sign = 'sub';
-            
-        }
+    else if ($(this).attr('data') === 'op' && lastInput !== 'op') {
+        lastInput = 'op';
+        expression += operators[$(this).attr('id')]
         decimal = false;
         $('#result').text('');
     } 
     // Handles equals
     else if ($(this).attr('data') === 'eq') {
-        if (sign === null) {
-            console.log('no sign')
-        } 
-        else if (lastNumber === null) {
-            console.log('no last number')
+        if(lastInput !== 'num') {
+            console.log('Enter another num')
+        }else {
+            expression = eval(expression)
+            $('#result').text(expression)
         }
-        else if ($('#result').text().length === 0) {
-            console.log('no second input')
-        }
-        else {
-            $('#result').text(operators[sign](lastNumber, parseFloat($('#result').text())));
-        }
-        
     }
 }))
